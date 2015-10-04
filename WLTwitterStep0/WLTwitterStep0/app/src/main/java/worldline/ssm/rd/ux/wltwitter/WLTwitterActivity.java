@@ -1,16 +1,22 @@
 package worldline.ssm.rd.ux.wltwitter;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import worldline.ssm.rd.ux.wltwitter.http.TwitterLoginAsyncTask;
+import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 
 
-public class WLTwitterActivity extends Activity{
+public class WLTwitterActivity extends Activity implements TweetClickedListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +24,16 @@ public class WLTwitterActivity extends Activity{
         setContentView(R.layout.activity_main);
         String login = getIntent().getExtras().getString("login");
         getActionBar().setSubtitle(login);
-        TwitterLoginAsyncTask task = new TwitterLoginAsyncTask();
-        task.execute(login);
+
+
+
+        TweetsFragment fragment = new TweetsFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.root_layout,fragment);
+        fragmentTransaction.commit();
+
+
     }
 
 
@@ -50,6 +64,10 @@ public class WLTwitterActivity extends Activity{
     }
 
 
-
-
+    @Override
+    public void onTweetClicked(Tweet tweet) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        Toast.makeText(context,tweet.text,duration).show();
+    }
 }

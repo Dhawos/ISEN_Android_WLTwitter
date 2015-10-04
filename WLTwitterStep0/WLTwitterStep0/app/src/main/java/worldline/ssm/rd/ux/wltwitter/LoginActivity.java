@@ -54,7 +54,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         String username = ((EditText)findViewById(R.id.login)).getText().toString();
         if(username == null || username.length() == 0){
             int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context,getResources().getString(R.string.error_no_login),duration).show();
+            Toast.makeText(context,R.string.error_no_login,duration).show();
         }
         else{
             String password = ((EditText)findViewById(R.id.password)).getText().toString();

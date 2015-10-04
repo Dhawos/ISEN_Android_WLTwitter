@@ -5,13 +5,20 @@ import android.os.AsyncTask;
 import java.util.List;
 
 import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.TweetListener;
 import worldline.ssm.rd.ux.wltwitter.helpers.TwitterHelper;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
+import android.util.Log;
 
 /**
  * Created by dhawo on 02/10/2015.
  */
 public class TwitterLoginAsyncTask extends AsyncTask<String,Integer,List<Tweet>>{
+    TweetListener listener;
+
+    public TwitterLoginAsyncTask(TweetListener listener){
+        this.listener = listener;
+    }
 
     @Override
     protected List<Tweet> doInBackground(String... params) {
@@ -25,9 +32,7 @@ public class TwitterLoginAsyncTask extends AsyncTask<String,Integer,List<Tweet>>
 
     @Override
     protected void onPostExecute(List<Tweet> tweets) {
-        super.onPostExecute(tweets);
-        for(Tweet element : tweets){
-            System.out.println( "[" + R.string.app_name + "]" + element.text );
-        }
+        listener.onTweetsRetrieved(tweets);
+
     }
 }

@@ -6,22 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetListener;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 
 /**
  * Created by dhawo on 09/10/2015.
  */
-public class TweetsAdapter extends BaseAdapter {
+public class TweetsAdapter extends BaseAdapter implements View.OnClickListener{
     private List<Tweet> tweets;
-    private View.OnClickListener listener;
+    private TweetClickedListener listener;
+    private Context context;
 
 
-    public TweetsAdapter(List<Tweet> tweets, View.OnClickListener listener){
+    public TweetsAdapter(List<Tweet> tweets, TweetClickedListener listener, Context context){
         this.tweets = tweets;
         this.listener = listener;
+        this.context = context;
     }
 
     @Override
@@ -61,8 +67,19 @@ public class TweetsAdapter extends BaseAdapter {
         holder.alias.setText("@" + tweet.user.screenName);
         holder.content.setText(tweet.text);
 
-        holder.button.setOnClickListener(listener);
+        Picasso.with(this.context).load(tweet.user.profileImageUrl).into(holder.image);
+
+        holder.button.setTag(tweet);
+
+
+        holder.button.setOnClickListener(this);
 
         return convertView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Tweet tweet = (Tweet) v.getTag();
+        listener.onRetweet(tweet);
     }
 }

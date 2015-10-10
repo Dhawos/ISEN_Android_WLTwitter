@@ -20,7 +20,7 @@ import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 import worldline.ssm.rd.ux.wltwitter.utils.ViewHolder;
 
 
-public class WLTwitterActivity extends Activity implements TweetClickedListener,View.OnClickListener {
+public class WLTwitterActivity extends Activity implements TweetClickedListener {
     TweetsFragment tweetsFragment;
 
     @Override
@@ -76,15 +76,12 @@ public class WLTwitterActivity extends Activity implements TweetClickedListener,
         fragmentTransaction.addToBackStack("detailed_tweet_transaction");
         fragmentTransaction.replace(R.id.root_layout, fragment);
         fragmentTransaction.commit();
-
-
     }
 
+
     @Override
-    public void onClick(View v) {
-        ViewHolder holder = (ViewHolder)v.getTag();
-        Context context = getApplicationContext();
+    public void onRetweet(Tweet tweet) {
         int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context,"RT - You clicked RT",duration).show();
+        Toast.makeText(this,"RT - " + tweet.text,duration).show();
     }
 }

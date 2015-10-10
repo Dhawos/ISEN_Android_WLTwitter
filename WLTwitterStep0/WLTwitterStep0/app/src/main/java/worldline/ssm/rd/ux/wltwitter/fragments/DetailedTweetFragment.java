@@ -1,15 +1,20 @@
 package worldline.ssm.rd.ux.wltwitter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -40,10 +45,8 @@ public class DetailedTweetFragment extends Fragment implements View.OnClickListe
         contentView.setText(tweet.text);
 
         //Retrieve userImage
-        //TO DO
-
-
-
+        final ImageView userImageView = (ImageView)rootView.findViewById(R.id.userPicture_detailed);
+        Picasso.with(getActivity().getApplicationContext()).load(tweet.user.profileImageUrl).into(userImageView);
 
         return rootView;
     }
@@ -62,6 +65,18 @@ public class DetailedTweetFragment extends Fragment implements View.OnClickListe
         btn_rt.setOnClickListener(this);
         btn_star.setOnClickListener(this);
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        activity.findViewById(R.id.root_layout).setBackgroundColor(Color.DKGRAY);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getActivity().findViewById(R.id.root_layout).setBackgroundColor(Color.WHITE);
     }
 
     public static DetailedTweetFragment newInstance(Tweet tweet){

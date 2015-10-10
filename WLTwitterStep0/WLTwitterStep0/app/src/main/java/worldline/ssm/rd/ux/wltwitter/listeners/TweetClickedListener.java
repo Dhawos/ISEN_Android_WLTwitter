@@ -7,4 +7,5 @@ import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
  */
 public interface TweetClickedListener {
     public void onTweetClicked(Tweet tweet);
+    public void onRetweet(Tweet tweet);
 }

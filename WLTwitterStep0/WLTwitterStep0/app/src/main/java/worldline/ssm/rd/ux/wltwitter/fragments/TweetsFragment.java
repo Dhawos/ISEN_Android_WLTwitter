@@ -62,7 +62,7 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
 
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
-        final TweetsAdapter adapter = new TweetsAdapter(tweets,(View.OnClickListener)getActivity());
+        final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
         listView.setAdapter(adapter);
 
     }

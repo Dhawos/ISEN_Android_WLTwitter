@@ -1,12 +1,12 @@
-package worldline.ssm.rd.ux.wltwitter;
+package worldline.ssm.rd.ux.wltwitter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +16,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.List;
 
+import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetListener;
+import worldline.ssm.rd.ux.wltwitter.WLTwitterApplication;
 import worldline.ssm.rd.ux.wltwitter.http.TwitterLoginAsyncTask;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
+import worldline.ssm.rd.ux.wltwitter.utils.TweetsAdapter;
 
 
 /**
@@ -58,12 +62,7 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
 
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
-        //TextView textView = (TextView)getView().findViewById(R.id.tweetTextView);
-        //textView.setText("");
-        //for(Tweet element : tweets){
-        //    textView.setText(textView.getText() + element.text + "\n\n");
-        //}
-        final ArrayAdapter<Tweet> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,tweets);
+        final TweetsAdapter adapter = new TweetsAdapter(tweets,(View.OnClickListener)getActivity());
         listView.setAdapter(adapter);
 
     }

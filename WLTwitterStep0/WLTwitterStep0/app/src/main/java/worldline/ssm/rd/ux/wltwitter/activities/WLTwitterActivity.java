@@ -1,22 +1,27 @@
-package worldline.ssm.rd.ux.wltwitter;
+package worldline.ssm.rd.ux.wltwitter.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import worldline.ssm.rd.ux.wltwitter.http.TwitterLoginAsyncTask;
+import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.fragments.DetailedTweetFragment;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
+import worldline.ssm.rd.ux.wltwitter.fragments.TweetsFragment;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
+import worldline.ssm.rd.ux.wltwitter.utils.ViewHolder;
 
 
-public class WLTwitterActivity extends Activity implements TweetClickedListener{
+public class WLTwitterActivity extends Activity implements TweetClickedListener,View.OnClickListener {
+    TweetsFragment tweetsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +30,10 @@ public class WLTwitterActivity extends Activity implements TweetClickedListener{
         String login = getIntent().getExtras().getString("login");
         getActionBar().setSubtitle(login);
 
-
-
-        TweetsFragment fragment = new TweetsFragment();
+        TweetsFragment tweetsFragment = new TweetsFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.root_layout,fragment);
+        fragmentTransaction.add(R.id.root_layout,tweetsFragment);
         fragmentTransaction.commit();
 
 
@@ -66,8 +69,22 @@ public class WLTwitterActivity extends Activity implements TweetClickedListener{
 
     @Override
     public void onTweetClicked(Tweet tweet) {
+
+        DetailedTweetFragment fragment = DetailedTweetFragment.newInstance(tweet);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.addToBackStack("detailed_tweet_transaction");
+        fragmentTransaction.replace(R.id.root_layout, fragment);
+        fragmentTransaction.commit();
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        ViewHolder holder = (ViewHolder)v.getTag();
         Context context = getApplicationContext();
-        int duration = Toast.LENGTH_LONG;
-        Toast.makeText(context,tweet.text,duration).show();
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context,"RT - You clicked RT",duration).show();
     }
 }

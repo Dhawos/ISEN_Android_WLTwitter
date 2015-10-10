@@ -1,4 +1,4 @@
-package worldline.ssm.rd.ux.wltwitter;
+package worldline.ssm.rd.ux.wltwitter.listeners;
 
 import java.util.List;
 

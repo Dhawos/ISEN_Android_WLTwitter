@@ -4,11 +4,9 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
-import worldline.ssm.rd.ux.wltwitter.R;
-import worldline.ssm.rd.ux.wltwitter.TweetListener;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetListener;
 import worldline.ssm.rd.ux.wltwitter.helpers.TwitterHelper;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
-import android.util.Log;
 
 /**
  * Created by dhawo on 02/10/2015.

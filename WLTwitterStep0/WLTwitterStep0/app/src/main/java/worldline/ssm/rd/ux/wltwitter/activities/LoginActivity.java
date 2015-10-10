@@ -1,4 +1,4 @@
-package worldline.ssm.rd.ux.wltwitter;
+package worldline.ssm.rd.ux.wltwitter.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import worldline.ssm.rd.ux.wltwitter.R;
 
 public class LoginActivity extends Activity implements View.OnClickListener{
 

@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 
 /**
@@ -26,11 +27,13 @@ import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
  */
 public class DetailedTweetFragment extends Fragment implements View.OnClickListener{
     Tweet tweet;
+    TweetClickedListener listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.detailed_tweet_fragment,container,false);
         tweet = getArguments().getParcelable("tweet");
+        listener = (TweetClickedListener)getActivity();
 
         //Retrieve username
         final TextView usernameView = (TextView)rootView.findViewById(R.id.username_detailed);
@@ -89,14 +92,11 @@ public class DetailedTweetFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Log.i("Test" , "Click is detected");
-        Log.i("Test" , v.toString());
         switch(v.getId()){
             case R.id.reply_button:
                 onReply();
                 break;
             case R.id.rt_button:
-                Log.i("Test" , "RT_Click is detected");
                 onRt();
                 break;
             case R.id.star_button:
@@ -106,21 +106,14 @@ public class DetailedTweetFragment extends Fragment implements View.OnClickListe
     }
 
     public void onReply(){
-        Context context = getActivity().getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context,"Reply - " + tweet.text,duration).show();
+        listener.onReply(tweet);
     }
 
     public void onRt(){
-        Log.i("Test" , "onRTLaunched");
-        Context context = getActivity().getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context,"RT - " + tweet.text,duration).show();
+        listener.onRetweet(tweet);
     }
 
     public void onStar(){
-        Context context = getActivity().getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context,"Star - " + tweet.text,duration).show();
+        listener.onStar(tweet);
     }
 }

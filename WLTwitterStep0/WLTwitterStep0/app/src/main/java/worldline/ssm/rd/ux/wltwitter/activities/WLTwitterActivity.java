@@ -84,4 +84,15 @@ public class WLTwitterActivity extends Activity implements TweetClickedListener 
         int duration = Toast.LENGTH_SHORT;
         Toast.makeText(this,"RT - " + tweet.text,duration).show();
     }
+
+    @Override
+    public void onStar(Tweet tweet) {
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(this,"Star - " + tweet.text,duration).show();
+    }
+    @Override
+    public void onReply(Tweet tweet) {
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(this,"Reply - " + tweet.text,duration).show();
+    }
 }

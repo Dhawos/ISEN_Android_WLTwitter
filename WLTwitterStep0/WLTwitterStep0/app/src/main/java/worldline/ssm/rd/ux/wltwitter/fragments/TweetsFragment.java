@@ -2,11 +2,16 @@ package worldline.ssm.rd.ux.wltwitter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +25,9 @@ import android.widget.ProgressBar;
 import java.util.List;
 
 import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseContract;
+import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseHelper;
+import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseManager;
 import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
 import worldline.ssm.rd.ux.wltwitter.listeners.TweetListener;
 import worldline.ssm.rd.ux.wltwitter.WLTwitterApplication;
@@ -63,6 +71,7 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
         final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
+        this.testDatabase(tweets);
         listView.setAdapter(adapter);
 
     }
@@ -82,5 +91,23 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Tweet tweet = (Tweet)parent.getItemAtPosition(position);
         mListener.onTweetClicked(tweet);
+    }
+
+    public static void testDatabase(List<Tweet> tweets){
+        final SQLiteOpenHelper sqLiteOpenHelper = new WLTwitterDatabaseHelper(WLTwitterApplication.getContext());
+        final SQLiteDatabase tweetsDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        for(Tweet tweet : tweets){
+            final ContentValues contentValues = WLTwitterDatabaseManager.tweetToContentValues(tweet);
+            tweetsDatabase.insert(WLTwitterDatabaseContract.TABLE_TWEETS, "", contentValues);
+        }
+
+        final Cursor cursor = tweetsDatabase.query(WLTwitterDatabaseContract.TABLE_TWEETS,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null,null,null);
+
+        while(cursor.moveToNext()){
+            Tweet retrievedTweet = WLTwitterDatabaseManager.tweetFromCursor(cursor);
+            Log.d(retrievedTweet.user.name,retrievedTweet.text);
+        }
+
     }
 }

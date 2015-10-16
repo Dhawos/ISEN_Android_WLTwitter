@@ -2,9 +2,12 @@ package worldline.ssm.rd.ux.wltwitter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,7 +42,7 @@ import worldline.ssm.rd.ux.wltwitter.utils.TweetsAdapter;
 /**
  * Created by dhawo on 02/10/2015.
  */
-public class TweetsFragment extends Fragment implements TweetListener,AdapterView.OnItemClickListener{
+public class TweetsFragment extends Fragment implements TweetListener,AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
 
     ListView listView;
     TweetClickedListener mListener;
@@ -66,12 +69,14 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
         SharedPreferences prefs = WLTwitterApplication.getContext().getApplicationContext().getSharedPreferences("twitter_preferences", Context.MODE_PRIVATE);
         String login = prefs.getString("login",null);
         AsyncTask task = new TwitterLoginAsyncTask(this).execute(login);
+
+        getLoaderManager().initLoader(0,null,this);
     }
 
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
         final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
-        this.testDatabase(tweets);
+        WLTwitterDatabaseManager.testContentProvider(tweets);
         listView.setAdapter(adapter);
 
     }
@@ -93,21 +98,32 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
         mListener.onTweetClicked(tweet);
     }
 
-    public static void testDatabase(List<Tweet> tweets){
-        final SQLiteOpenHelper sqLiteOpenHelper = new WLTwitterDatabaseHelper(WLTwitterApplication.getContext());
-        final SQLiteDatabase tweetsDatabase = sqLiteOpenHelper.getWritableDatabase();
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final CursorLoader cursorLoader = new CursorLoader(WLTwitterApplication.getContext());
+        cursorLoader.setUri(WLTwitterDatabaseContract.TWEETS_URI);
+        cursorLoader.setProjection(WLTwitterDatabaseContract.PROJECTION_FULL);
+        cursorLoader.setSelection(null);
+        cursorLoader.setSelectionArgs(null);
+        cursorLoader.setSortOrder(null);
+        return cursorLoader;
+    }
 
-        for(Tweet tweet : tweets){
-            final ContentValues contentValues = WLTwitterDatabaseManager.tweetToContentValues(tweet);
-            tweetsDatabase.insert(WLTwitterDatabaseContract.TABLE_TWEETS, "", contentValues);
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null){
+            while (data.moveToNext()){
+                final Tweet tweet = WLTwitterDatabaseManager.tweetFromCursor(data);
+                Log.d("TweetsFragment",tweet.toString());
+            }
+            if(!data.isClosed()){
+                data.close();
+            }
         }
+    }
 
-        final Cursor cursor = tweetsDatabase.query(WLTwitterDatabaseContract.TABLE_TWEETS,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null,null,null);
-
-        while(cursor.moveToNext()){
-            Tweet retrievedTweet = WLTwitterDatabaseManager.tweetFromCursor(cursor);
-            Log.d(retrievedTweet.user.name,retrievedTweet.text);
-        }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
     }
 }

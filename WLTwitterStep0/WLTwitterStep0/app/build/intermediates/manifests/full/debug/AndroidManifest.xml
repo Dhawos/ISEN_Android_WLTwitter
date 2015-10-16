@@ -16,6 +16,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <provider
+            android:name="worldline.ssm.rd.ux.wltwitter.database.WLDatabaseTwitterProvider"
+            android:authorities="worldline.ssm.rd.ux.TweetAuthority"
+            android:exported="false" />
+
         <activity
             android:name="worldline.ssm.rd.ux.wltwitter.activities.WLTwitterActivity"
             android:label="@string/app_name" >

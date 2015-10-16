@@ -2,11 +2,15 @@ package worldline.ssm.rd.ux.wltwitter.database;
 
 import java.util.List;
 
+import worldline.ssm.rd.ux.wltwitter.WLTwitterApplication;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 import worldline.ssm.rd.ux.wltwitter.pojo.TwitterUser;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class WLTwitterDatabaseManager {
 
@@ -80,15 +84,28 @@ public class WLTwitterDatabaseManager {
 	}
 
 	public static void testDatabase(List<Tweet> tweets){
-		// TODO Retrieve a writableDatabase from your database helper
-		
-		// TODO Then iterate over the list of tweets, and insert all tweets in database
-		
-		// TODO Finally, after inserting all tweets in database, query the database to retrieve all entries as cursor, and log
+		final SQLiteOpenHelper sqLiteOpenHelper = new WLTwitterDatabaseHelper(WLTwitterApplication.getContext());
+		final SQLiteDatabase tweetsDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+		for(Tweet tweet : tweets){
+			final ContentValues contentValues = WLTwitterDatabaseManager.tweetToContentValues(tweet);
+			tweetsDatabase.insert(WLTwitterDatabaseContract.TABLE_TWEETS, "", contentValues);
+		}
+
+		final Cursor cursor = tweetsDatabase.query(WLTwitterDatabaseContract.TABLE_TWEETS,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null,null,null);
+
+		while(cursor.moveToNext()){
+			Tweet retrievedTweet = WLTwitterDatabaseManager.tweetFromCursor(cursor);
+			Log.d(retrievedTweet.user.name, retrievedTweet.text);
+		}
+
 	}
 
 	public static void testContentProvider(List<Tweet> tweets){
-		// TODO Test your ContentProvider here
+		WLTwitterApplication.getContext().getContentResolver().query(WLTwitterDatabaseContract.TWEETS_URI,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null);
+		WLTwitterApplication.getContext().getContentResolver().insert(WLTwitterDatabaseContract.TWEETS_URI, null);
+		WLTwitterApplication.getContext().getContentResolver().update(WLTwitterDatabaseContract.TWEETS_URI, null, null, null);
+		WLTwitterApplication.getContext().getContentResolver().delete(WLTwitterDatabaseContract.TWEETS_URI, null,null);
 	}
 
 }

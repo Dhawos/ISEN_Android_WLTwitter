@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import java.util.List;
 
 import worldline.ssm.rd.ux.wltwitter.R;
+import worldline.ssm.rd.ux.wltwitter.database.WLDatabaseTwitterProvider;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseContract;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseHelper;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseManager;
@@ -76,7 +77,19 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
         final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
-        WLTwitterDatabaseManager.testContentProvider(tweets);
+        //WLTwitterDatabaseManager.testContentProvider(tweets);
+
+        for(Tweet element : tweets){
+            WLTwitterApplication.getContext().getContentResolver().insert(WLTwitterDatabaseContract.TWEETS_URI, WLTwitterDatabaseManager.tweetToContentValues(element));
+        }
+
+        final Cursor cursor = WLTwitterApplication.getContext().getContentResolver().query(WLTwitterDatabaseContract.TWEETS_URI,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null);
+
+        while(cursor.moveToNext()){
+            Tweet retrievedTweet = WLTwitterDatabaseManager.tweetFromCursor(cursor);
+            Log.d(retrievedTweet.user.name, retrievedTweet.text);
+        }
+
         listView.setAdapter(adapter);
 
     }

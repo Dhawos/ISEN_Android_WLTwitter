@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
@@ -109,7 +110,8 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Tweet tweet = (Tweet)parent.getItemAtPosition(position);
+        Cursor c = (Cursor) parent.getItemAtPosition(position);
+        final Tweet tweet = WLTwitterDatabaseManager.tweetFromCursor(c);
         mListener.onTweetClicked(tweet);
     }
 

@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -38,6 +39,7 @@ import worldline.ssm.rd.ux.wltwitter.WLTwitterApplication;
 import worldline.ssm.rd.ux.wltwitter.http.TwitterLoginAsyncTask;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
 import worldline.ssm.rd.ux.wltwitter.utils.TweetsAdapter;
+import worldline.ssm.rd.ux.wltwitter.utils.TweetsCursorAdapter;
 
 
 /**
@@ -76,8 +78,8 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
 
     @Override
     public void onTweetsRetrieved(List<Tweet> tweets) {
-        final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
-        //WLTwitterDatabaseManager.testContentProvider(tweets);
+        //final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
+
 
         for(Tweet element : tweets){
             WLTwitterApplication.getContext().getContentResolver().insert(WLTwitterDatabaseContract.TWEETS_URI, WLTwitterDatabaseManager.tweetToContentValues(element));
@@ -90,7 +92,7 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
             Log.d(retrievedTweet.user.name, retrievedTweet.text);
         }
 
-        listView.setAdapter(adapter);
+        //listView.setAdapter(adapter);
 
     }
 
@@ -124,15 +126,8 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null){
-            while (data.moveToNext()){
-                final Tweet tweet = WLTwitterDatabaseManager.tweetFromCursor(data);
-                Log.d("TweetsFragment",tweet.toString());
-            }
-            if(!data.isClosed()){
-                data.close();
-            }
-        }
+        final TweetsCursorAdapter adapter = new TweetsCursorAdapter(getActivity(),data, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,(TweetClickedListener)getActivity());
+        listView.setAdapter(adapter);
     }
 
     @Override

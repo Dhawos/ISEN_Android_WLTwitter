@@ -29,7 +29,9 @@ public class WLDatabaseTwitterProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Log.i(Constants.General.LOG_TAG,"QUERY");
-        return mDBHelper.getReadableDatabase().query(WLTwitterDatabaseContract.TABLE_TWEETS,projection,selection,selectionArgs,sortOrder,null,null);
+        Cursor c =  mDBHelper.getReadableDatabase().query(WLTwitterDatabaseContract.TABLE_TWEETS,projection,selection,selectionArgs,sortOrder,null,null);
+        c.setNotificationUri(getContext().getContentResolver(),uri);
+        return c;
     }
 
     @Override
@@ -44,18 +46,22 @@ public class WLDatabaseTwitterProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         Log.i(Constants.General.LOG_TAG, "INSERT");
         long id = mDBHelper.getWritableDatabase().insert(WLTwitterDatabaseContract.TABLE_TWEETS,null,values);
-        return ContentUris.withAppendedId(uri,id);
+        Uri returnedUri = ContentUris.withAppendedId(uri,id);
+        getContext().getContentResolver().notifyChange(returnedUri,null);
+        return returnedUri;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         Log.i(Constants.General.LOG_TAG,"DELETE");
+        getContext().getContentResolver().notifyChange(uri,null);
         return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.i(Constants.General.LOG_TAG,"UPDATE");
+        getContext().getContentResolver().notifyChange(uri,null);
         return 0;
     }
 }

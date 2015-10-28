@@ -36,6 +36,13 @@
         </activity>
 
 
+        <service
+            android:name=".service.TweetService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/service_name"
+            android:exported="false">
+
+        </service>
     </application>
 
 </manifest>

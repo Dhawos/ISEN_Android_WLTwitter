@@ -1482,7 +1482,8 @@ containing a value of this type.
         public static final int login=0x7f070016;
         public static final int loginHint=0x7f070017;
         public static final int passwordHint=0x7f070018;
-        public static final int title_activity_login=0x7f070019;
+        public static final int service_name=0x7f070019;
+        public static final int title_activity_login=0x7f07001a;
     }
     public static final class style {
         /**  API 11 theme customizations can go here. 

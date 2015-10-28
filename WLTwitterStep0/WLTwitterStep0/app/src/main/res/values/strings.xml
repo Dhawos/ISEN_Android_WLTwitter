@@ -15,4 +15,6 @@
     <string name="error_no_password">Empty password !</string>
     <string name="action_settings">Title!</string>
     <string name="title_activity_login">Login</string>
+
+    <string name="service_name">TweetService</string>
 </resources>

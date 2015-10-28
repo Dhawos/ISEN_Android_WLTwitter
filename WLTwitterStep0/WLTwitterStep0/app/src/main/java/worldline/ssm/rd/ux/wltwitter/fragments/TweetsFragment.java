@@ -1,12 +1,16 @@
 package worldline.ssm.rd.ux.wltwitter.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -27,29 +31,27 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import java.util.List;
+import java.util.Calendar;
 
 import worldline.ssm.rd.ux.wltwitter.R;
-import worldline.ssm.rd.ux.wltwitter.database.WLDatabaseTwitterProvider;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseContract;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseHelper;
 import worldline.ssm.rd.ux.wltwitter.database.WLTwitterDatabaseManager;
 import worldline.ssm.rd.ux.wltwitter.listeners.TweetClickedListener;
-import worldline.ssm.rd.ux.wltwitter.listeners.TweetListener;
 import worldline.ssm.rd.ux.wltwitter.WLTwitterApplication;
-import worldline.ssm.rd.ux.wltwitter.http.TwitterLoginAsyncTask;
 import worldline.ssm.rd.ux.wltwitter.pojo.Tweet;
-import worldline.ssm.rd.ux.wltwitter.utils.TweetsAdapter;
+import worldline.ssm.rd.ux.wltwitter.service.TweetService;
 import worldline.ssm.rd.ux.wltwitter.utils.TweetsCursorAdapter;
 
 
 /**
  * Created by dhawo on 02/10/2015.
  */
-public class TweetsFragment extends Fragment implements TweetListener,AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
+public class TweetsFragment extends Fragment implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
 
     ListView listView;
     TweetClickedListener mListener;
+    PendingIntent mServicePendingIntent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -70,30 +72,29 @@ public class TweetsFragment extends Fragment implements TweetListener,AdapterVie
     public void onStart() {
         super.onStart();
 
-        SharedPreferences prefs = WLTwitterApplication.getContext().getApplicationContext().getSharedPreferences("twitter_preferences", Context.MODE_PRIVATE);
-        String login = prefs.getString("login",null);
-        AsyncTask task = new TwitterLoginAsyncTask(this).execute(login);
+    }
 
-        getLoaderManager().initLoader(0,null,this);
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences prefs = WLTwitterApplication.getContext().getApplicationContext().getSharedPreferences("twitter_preferences", Context.MODE_PRIVATE);
+        String login = prefs.getString("login", null);
+        final Calendar cal = Calendar.getInstance();
+        Intent serviceIntent = new Intent(getActivity(), TweetService.class);
+        serviceIntent.putExtra("login", login);
+        mServicePendingIntent = PendingIntent.getService(getActivity(),0,serviceIntent,0);
+        final AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60000, mServicePendingIntent);
+        getLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override
-    public void onTweetsRetrieved(List<Tweet> tweets) {
-        //final TweetsAdapter adapter = new TweetsAdapter(tweets,(TweetClickedListener)getActivity(),getActivity().getApplicationContext());
-
-
-        for(Tweet element : tweets){
-            WLTwitterApplication.getContext().getContentResolver().insert(WLTwitterDatabaseContract.TWEETS_URI, WLTwitterDatabaseManager.tweetToContentValues(element));
-        }
-
-        final Cursor cursor = WLTwitterApplication.getContext().getContentResolver().query(WLTwitterDatabaseContract.TWEETS_URI,WLTwitterDatabaseContract.PROJECTION_FULL,null,null,null);
-
-        while(cursor.moveToNext()){
-            Tweet retrievedTweet = WLTwitterDatabaseManager.tweetFromCursor(cursor);
-            Log.d(retrievedTweet.user.name, retrievedTweet.text);
-        }
-
-        //listView.setAdapter(adapter);
+    public void onPause() {
+        super.onPause();
+        final AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(mServicePendingIntent);
 
     }
 

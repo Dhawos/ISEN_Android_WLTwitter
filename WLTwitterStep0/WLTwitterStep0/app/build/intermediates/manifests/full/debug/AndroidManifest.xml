@@ -34,6 +34,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="worldline.ssm.rd.ux.wltwitter.service.TweetService"
+            android:exported="false"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/service_name" >
+        </service>
     </application>
 
 </manifest>

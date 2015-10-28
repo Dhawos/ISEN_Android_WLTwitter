@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class WLTwitterDatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "tweets.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
 
 
     public WLTwitterDatabaseHelper(Context context) {

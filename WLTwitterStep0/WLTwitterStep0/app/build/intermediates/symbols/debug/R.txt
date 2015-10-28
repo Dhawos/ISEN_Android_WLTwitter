@@ -502,7 +502,8 @@ int string hello_world 0x7f070015
 int string login 0x7f070016
 int string loginHint 0x7f070017
 int string passwordHint 0x7f070018
-int string title_activity_login 0x7f070019
+int string service_name 0x7f070019
+int string title_activity_login 0x7f07001a
 int style AppBaseTheme 0x7f0b0002
 int style AppTheme 0x7f0b0066
 int style Base_TextAppearance_AppCompat 0x7f0b0028
